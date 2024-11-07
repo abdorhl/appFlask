@@ -1,0 +1,30 @@
+---
+- name: Déployer l'application Flask
+  hosts: serveur_cible
+  become: true
+  tasks:
+    - name: Installer les dépendances
+      pip:
+        requirements: /chemin/vers/requirements.txt
+        virtualenv: /chemin/vers/venv
+
+    - name: Configurer le pare-feu
+      ufw:
+        rule: allow
+        port: 5000  
+        proto: tcp
+
+    - name: Démarrer l'application
+      systemd:
+        name: flask_app
+        enabled: yes
+        state: started
+        exec_start: "/chemin/vers/venv/bin/gunicorn -w 4 -b 0.0.0.0:5000 app:app"
+      notify:
+        - Restart flask_app
+
+  handlers:
+    - name: Restart flask_app
+      systemd:
+        name: flask_app
+        state: restarted
