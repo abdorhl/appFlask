@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h2>Event Dashboard</h2>
+
+<h3>Your Events</h3>
+<ul>
+    {% for event in events %}
+        <li>
+            <strong>{{ event.name }}</strong> - {{ event.date.strftime('%Y-%m-%d') }}
+            <a href="{{ url_for('event_details', event_id=event.id) }}">View Details</a>
+        </li>
+    {% endfor %}
+</ul>
+
+<h3>Analytics</h3>
+<div id="analytics">
+    {% for data in analytics %}
+        <p>{{ data.event }}: {{ data.attendees }} attendees</p>
+    {% endfor %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h1>Welcome to the Event Manager!</h1>
+<p>Manage your events, track attendance, and gain insights with powerful analytics.</p>
+{% if not current_user.is_authenticated %}
+    <p><a href="{{ url_for('login') }}">Log in</a> or <a href="{{ url_for('register') }}">Register</a> to get started.</p>
+{% endif %}
+{% endblock %}
