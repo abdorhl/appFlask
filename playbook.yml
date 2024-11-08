@@ -11,18 +11,14 @@
           - ufw
         state: present
       become: true
-      
+
     - name: Create Python virtual environment
       command: python3 -m venv /home/kali/venv
-      creates: /home/kali/venv
-      
-    - name: Install Python packages from requirements.txt
-      command:
-        cmd: "/home/kali/venv/bin/pip install -r requirements.txt"
-      become_user: kali  # Replace with actual path
+      creates: /home/kali/venv  # This will ensure it only runs if the virtualenv doesn't exist
 
-    - name: Ensure the virtual environment is activated and dependencies installed
-      command: /home/kali/venv/bin/python /home/kali/venv/bin/pip install -r requirements.txt
+    - name: Install Python packages from requirements.txt
+      command: "/home/kali/venv/bin/pip install -r requirements.txt"
+      become_user: kali  # Ensure this is executed as the kali user
 
     - name: Allow SSH traffic
       ufw:
@@ -43,5 +39,5 @@
 
     - name: Start Flask app with Gunicorn
       shell: |
-        cd .   # Replace with actual path
-        gunicorn --bind 0.0.0.0:80 app:app
+        cd .  # Replace with actual path to your Flask app
+        /home/kali/venv/bin/gunicorn --bind 0.0.0.0:80 app:app
