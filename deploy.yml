@@ -1,5 +1,5 @@
 - name: Deploy Flask Application
-  hosts: 192.168.88.132
+  hosts: web
   become: true
     tasks:
     - name: Install system dependencies
