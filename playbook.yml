@@ -20,7 +20,7 @@
       # This ensures that the virtualenv is created only if it doesn't already exist.
       
     - name: Install Python packages from requirements.txt
-      command: "/home/kali/venv/bin/pip install -r requirements.txt"
+      command: "/home/kali/venv/bin/pip install -r /home/kali/appFlask/requirements.txt"
       become_user: kali  # Ensure this is executed as the kali user
 
     - name: Allow SSH traffic
