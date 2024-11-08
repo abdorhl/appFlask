@@ -43,7 +43,7 @@
     - name: Enable UFW
       ufw:
         state: enabled
-        enabled: yes
+       
 
     - name: Start Flask app with Gunicorn
       shell: |
