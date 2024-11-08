@@ -1,7 +1,8 @@
 - name: Deploy Flask Application
   hosts: web
   become: true
-    tasks:
+    
+  tasks:
     - name: Install system dependencies
       apt:
         name:
