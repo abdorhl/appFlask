@@ -13,11 +13,14 @@
       become: true
 
     - name: Create Python virtual environment
-      command: python3 -m venv /home/kali/venv
-      creates: /home/kali/venv  # This will ensure it only runs if the virtualenv doesn't exist
-
+      shell: |
+        if [ ! -d "/home/kali/venv" ]; then
+          python3 -m venv /home/kali/venv
+        fi
+      # This ensures that the virtualenv is created only if it doesn't already exist.
+      
     - name: Install Python packages from requirements.txt
-      command: "/home/kali/venv/bin/pip install -r requirements.txt"
+      command: "/home/kali/venv/bin/pip install -r /path/to/your/requirements.txt"
       become_user: kali  # Ensure this is executed as the kali user
 
     - name: Allow SSH traffic
@@ -39,5 +42,5 @@
 
     - name: Start Flask app with Gunicorn
       shell: |
-        cd .  # Replace with actual path to your Flask app
+        cd /path/to/your/app  # Replace with actual path to your Flask app
         /home/kali/venv/bin/gunicorn --bind 0.0.0.0:80 app:app
