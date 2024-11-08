@@ -1,4 +1,3 @@
----
 - name: Deploy Flask Application
   hosts: 192.168.88.132
   become: true
