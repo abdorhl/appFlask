@@ -1,9 +1,9 @@
 ---
-- name: Déployer l'application Flask
+- name: Deploy Flask Application
   hosts: 192.168.88.132
   become: true
     tasks:
-    - name: Install dependencies
+    - name: Install system dependencies
       apt:
         name:
           - python3-pip
@@ -13,7 +13,7 @@
 
     - name: Install Python packages
       pip:
-        requirements: /requirements.txt   # Replace with actual path
+        requirements: requirements.txt   # Replace with actual path
 
     - name: Allow SSH traffic
       ufw:
@@ -34,5 +34,5 @@
 
     - name: Start Flask app with Gunicorn
       shell: |
-        cd /path/to/app   # Replace with actual path
+        cd .   # Replace with actual path
         gunicorn --bind 0.0.0.0:80 app:app
