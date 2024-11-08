@@ -33,17 +33,16 @@
         rule: allow
         port: '22'
         proto: tcp
+        
+    - name: Enable UFW
+      ufw:
+        state: enabled
 
     - name: Allow HTTP traffic
       ufw:
         rule: allow
         port: '80'
         proto: tcp
-
-    - name: Enable UFW
-      ufw:
-        state: enabled
-       
 
     - name: Start Flask app with Gunicorn
       shell: |
