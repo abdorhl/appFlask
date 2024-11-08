@@ -6,14 +6,23 @@
     - name: Install system dependencies
       apt:
         name:
+          - python3-venv
           - python3-pip
           - ufw
         state: present
       become: true
+      
+    - name: Create Python virtual environment
+      command: python3 -m venv /home/kali/venv
+      creates: /home/kali/venv
+      
+    - name: Install Python packages from requirements.txt
+      command:
+        cmd: "/home/kali/venv/bin/pip install -r requirements.txt"
+      become_user: kali  # Replace with actual path
 
-    - name: Install Python packages
-      pip:
-        requirements: requirements.txt   # Replace with actual path
+    - name: Ensure the virtual environment is activated and dependencies installed
+      command: /home/kali/venv/bin/python /home/kali/venv/bin/pip install -r requirements.txt
 
     - name: Allow SSH traffic
       ufw:
