@@ -45,5 +45,5 @@
         proto: tcp
 
     - name: Start Flask app with Gunicorn
-      shell: |
-        cd /home/kali/appFlask && /home/kali/venv/bin/gunicorn --bind 0.0.0.0:80 app:app
+      ansible.builtin.command: >
+      cd /home/kali/my_flask_app && /home/kali/venv/bin/gunicorn --bind 0.0.0.0:80 app:app
