@@ -46,5 +46,4 @@
 
     - name: Start Flask app with Gunicorn
       shell: |
-        cd /path/to/your/app  # Replace with actual path to your Flask app
-        /home/kali/venv/bin/gunicorn --bind 0.0.0.0:80 app:app
+        cd /home/kali/appFlask && /home/kali/venv/bin/gunicorn --bind 0.0.0.0:80 app:app
