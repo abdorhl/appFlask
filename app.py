@@ -57,10 +57,16 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_mysqldb import MySQL
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
-from config import Config
 
 app = Flask(__name__)
-app.config.from_object(Config)
+
+# Configurations directly in the app
+app.config['MYSQL_HOST'] = 'localhost'  # Change if your MySQL is on a different host
+app.config['MYSQL_USER'] = 'mysql_user'
+app.config['MYSQL_PASSWORD'] = 'password'
+app.config['MYSQL_DB'] = 'database'
+app.config['SECRET_KEY'] = os.urandom(24)
+
 mysql = MySQL(app)
 
 @app.route('/')
@@ -111,5 +117,4 @@ def login():
     return render_template('login.html')
 
 if __name__ == "__main__":
-    app.secret_key = os.urandom(24)  # Set a secret key for sessions
-    app.run(debug=True)
+    app.run(host="192.168.88.132", port=80, debug=True)
