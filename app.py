@@ -56,6 +56,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_mysqldb import MySQL
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 import os
 
 app = Flask(__name__)
@@ -68,6 +69,26 @@ app.config['MYSQL_DB'] = 'database'
 app.config['SECRET_KEY'] = os.urandom(24)
 
 mysql = MySQL(app)
+
+# Set up Flask-Login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'  # Redirect to login if not logged in
+
+# User loader function for Flask-Login
+class User:
+    def __init__(self, id, username):
+        self.id = id
+        self.username = username
+
+@login_manager.user_loader
+def load_user(user_id):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM users WHERE id = %s", [user_id])
+    user = cur.fetchone()
+    if user:
+        return User(id=user[0], username=user[1])  # Return a user instance with id and username
+    return None
 
 @app.route('/')
 def index():
@@ -107,6 +128,8 @@ def login():
         user = cur.fetchone()
 
         if user and check_password_hash(user[2], password):  # assuming password is at index 2
+            user_obj = User(id=user[0], username=user[1])  # Create a user object
+            login_user(user_obj)  # Log the user in
             flash('Login successful!', 'success')
             return redirect(url_for('index'))
         else:
@@ -116,5 +139,13 @@ def login():
 
     return render_template('login.html')
 
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()  # Log out the user
+    flash('You have been logged out.', 'success')
+    return redirect(url_for('index'))
+
 if __name__ == "__main__":
     app.run(host="192.168.88.132", port=80, debug=True)
+
