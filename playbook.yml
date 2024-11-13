@@ -1,7 +1,7 @@
 - name: Deploy Flask Application
   hosts: web
   become: true
-    
+
   tasks:
     - name: Install system dependencies
       apt:
@@ -10,7 +10,6 @@
           - python3-pip
           - ufw
         state: present
-      become: true
 
     - name: Create Python virtual environment
       shell: |
@@ -28,23 +27,43 @@
       command: "/home/kali/venv/bin/pip install -r /home/kali/appFlask/requirements.txt"
       become_user: kali
 
-    - name: Allow SSH traffic
+    - name: Allow SSH and HTTP traffic
       ufw:
         rule: allow
-        port: '22'
+        port: '{{ item }}'
         proto: tcp
+      loop:
+        - '22'
+        - '80'
 
     - name: Enable UFW
       ufw:
         state: enabled
 
-    - name: Allow HTTP traffic
-      ufw:
-        rule: allow
-        port: '80'
-        proto: tcp
+    - name: Create a systemd service file for the Flask app
+      copy:
+        dest: /etc/systemd/system/flaskapp.service
+        content: |
+          [Unit]
+          Description=Flask Application
+          After=network.target
 
-    - name: Start Flask app with Gunicorn
-      shell: |
-        cd /home/kali/appFlask && /home/kali/venv/bin/gunicorn --bind 0.0.0.0:80 app:app
-      become_user: kali
+          [Service]
+          User=kali
+          WorkingDirectory=/home/kali/appFlask
+          Environment="PATH=/home/kali/venv/bin"
+          ExecStart=/home/kali/venv/bin/gunicorn --bind 0.0.0.0:80 app:app
+          Restart=always
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Reload systemd daemon
+      systemd:
+        daemon_reload: yes
+
+    - name: Start and enable Flask app service
+      systemd:
+        name: flaskapp
+        state: started
+        enabled: true
